@@ -12,8 +12,8 @@
 
  Другими словами: функция должна возвращать в неизменном виде то, что поступает ей на вход
  */
-function returnFirstArgument(b) {
-  return c
+function returnFirstArgument(a) {
+    return a;
 }
 
 /*
@@ -31,7 +31,7 @@ function returnFirstArgument(b) {
    sumWithDefaults(10) вернет 110
  */
 function sumWithDefaults(a, b = 100) {
-  return a+b
+    return a+b
 }
 
 /*
@@ -43,8 +43,9 @@ function sumWithDefaults(a, b = 100) {
    returnFnResult(() => 'привет') вернет 'привет'
  */
 function returnFnResult(fn) {
-  let result = fn();
-  return fn();
+    let result = fn();
+
+    return result;
 }
 
 /*
@@ -62,9 +63,10 @@ function returnFnResult(fn) {
  */
 
 function returnCounter(i = 0) {
-  return function f() {return i += 1}; 
-  }
-
+    return function f() {
+        return i += 1
+    }; 
+}
 
 /*
  Задание 5 *:
@@ -77,8 +79,9 @@ function returnCounter(i = 0) {
  */
 
 let returnArgumentsArray = (...theArgs) => {
-  let arr = theArgs
-  return arr;
+    let arr = theArgs;
+
+    return arr;
 }
 
 /*
@@ -98,8 +101,9 @@ let returnArgumentsArray = (...theArgs) => {
  */
 
 function bindFunction(fn, ...theArgs) {
-  let bindedF = fn.bind(null, ...theArgs);
-  return bindedF;
+    return function() {
+        return fn.apply(this, theArgs)
+    }
 }
 
 export {
