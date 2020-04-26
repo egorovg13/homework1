@@ -31,7 +31,7 @@ function returnFirstArgument(a) {
    sumWithDefaults(10) вернет 110
  */
 function sumWithDefaults(a, b = 100) {
-    return a+b
+    return a+b;
 }
 
 /*
@@ -64,7 +64,7 @@ function returnFnResult(fn) {
 
 function returnCounter(i = 0) {
     return function f() {
-        return i += 1
+        return i += 1;
     }; 
 }
 
@@ -82,7 +82,7 @@ let returnArgumentsArray = (...theArgs) => {
     let arr = theArgs;
 
     return arr;
-}
+};
 
 /*
  Задание 6 *:
@@ -102,8 +102,8 @@ let returnArgumentsArray = (...theArgs) => {
 
 function bindFunction(fn, ...theArgs) {
     return function() {
-        return fn.apply(this, theArgs)
-    }
+        return fn.apply(this, theArgs);
+    };
 }
 
 export {
@@ -113,4 +113,4 @@ export {
     returnFnResult,
     returnCounter,
     bindFunction
-}
+};
