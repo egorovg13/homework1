@@ -59,7 +59,7 @@ function isSomeTrue(array, fn) {
   
     let result = false;
 
-    if (array.length === 0 || Array.isArray(array) === false) {
+    if (array.length === 0 || (array instanceof Array) === false) {
 
         throw new Error ('empty array');
 
@@ -76,7 +76,7 @@ function isSomeTrue(array, fn) {
         }
         
         return result;
-}
+    }
 }
 
 /*
@@ -98,7 +98,7 @@ function returnBadArguments(fn) {
 
     for (let i = 1; i < arguments.length; i++) {
         try {
-            fn(arguments[i])
+            fn(arguments[i]);
         } catch (e) {
             resultArray.push(arguments[i]);
         }
@@ -125,44 +125,45 @@ function returnBadArguments(fn) {
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
 function calculator(number = 0) {
-  let obj = {
-      sum: function () {
-          for (let x of arguments) {
-              number += x;
-          }
-      },
-  dif: function (...theArgs) {
-    for (let x of theArgs) {
-      number -=x;
+    if (typeof number != 'number') {
+        throw new Error ('number is not a number');
     }
-  },
-  div: function (...theArgs) {
-    for (let x of theArgs) {
-      number /= x;
-    }
-  },
-  mul: function (...theArgs) {
-    for (let x of theArgs) {
-        number *= x;
-    }
-  }
-};
+    let obj = {
+        sum: function (...theArgs) {
+            for (let x of theArgs) {
+                number += x;
+            } 
+            
+            return number;
+        },
+        dif: function (...theArgs) {
+            for (let x of theArgs) {
+                number -=x;
+            }
 
-return obj;
-}
-
-  
-  
-  
-  /* const isNotZero =(x) => {
-      if (typeof x === 0)
-    }
-    const isNumber = (x) => {
-        if (typeof x !== 'number') {
-            throw new Error ('number is not a number')
+            return number;
+        },
+        div: function (...theArgs) {
+            if (theArgs.includes(0)) {
+                throw new Error ('division by 0');
+            }
+            for (let x of theArgs) {
+                number /= x;
+            }
+            
+            return number;
+        },
+        mul: function (...theArgs) {
+            for (let x of theArgs) {
+                number *= x;
+            }
+            
+            return number;
         }
-    }
-*/
+    };
+
+    return obj;
+}
 
 /* При решении задач, пострайтесь использовать отладчик */
 
@@ -171,4 +172,4 @@ export {
     isSomeTrue,
     returnBadArguments,
     calculator
-}
+};
