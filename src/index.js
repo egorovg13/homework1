@@ -19,7 +19,7 @@
 function isAllTrue(array, fn) {
     let result = true;
 
-    if (array.length === 0 || Array.isArray(array) === false) {
+    if (array.length === 0 || (array instanceof Array) === false) {
 
         throw new Error ('empty array');
 
