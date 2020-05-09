@@ -81,9 +81,9 @@ function delegate(target, fn) {
  */
 function once(target, fn) {
     target.onclick = function (e) {
-        fn();
+        fn(e);
         target.onclick = null;
-  }
+    };
 }
 
 export {
