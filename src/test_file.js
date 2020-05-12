@@ -1,10 +1,6 @@
-let arrayLocation = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-const NameSorter = (a, b) => {
-if (a.name < b.name) return -1;
-if (a.name === b.name) return 0;
-if (a.name > b.name) return 1;
-};
+function isMatching(full, chunk) {
+    return full.toLowerCase().includes(chunk.toLowerCase());
 
-return fetch (arrayLocation).then(response => response.json()).then(list => {
-    console.log (list.sort(NameSorter));
-});
+}
+
+console.log(isMatching('Moscow', 'm1oscow'));

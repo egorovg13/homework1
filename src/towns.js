@@ -29,6 +29,9 @@
    homeworkContainer.appendChild(newDiv);
  */
 const homeworkContainer = document.querySelector('#homework-container');
+const newDiv = document.createElement('div');
+
+homeworkContainer.appendChild(newDiv);
 
 /*
  Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
@@ -37,17 +40,42 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-  let arrayLocation = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-  const NameSorter = (a, b) => {
-      if (a.name < b.name) return -1;
-      if (a.name === b.name) return 0;
-      if (a.name > b.name) return 1;
-  };
+    let arrayLocation = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
 
-  return fetch (arrayLocation).then(response => response.json()).then(list => {
-      return list.sort(NameSorter);
-  });
+    const NameSorter = (a, b) => {
+        if (a.name < b.name) return -1;
+        if (a.name === b.name) return 0;
+        if (a.name > b.name) return 1;
+    };
+
+    const responseHandler = (response) => {
+      if (response.ok) {
+        console.log('HEADERS OK'); 
+        return response.json();
+      } else {
+        console.log('HEADERS NOT OK');
+      }
+      
+    };
+
+    return fetch (arrayLocation).then(response => responseHandler(response)).then(list => list.sort(NameSorter)).catch(err => {
+      console.log('CAUGHT. Error Message is:   ' + err);
+      loadErrorHandler();
+    });
 }
+
+const loadErrorHandler = () => {
+  let div = document.createElement('div');
+  div.textContent = 'Не удалось загрузить города';
+  filterResult.appendChild(div);
+
+  let button = document.createElement('button');
+  button.textContent = 'Повторить';
+  filterResult.appendChild(button);
+
+  button.onclick = offerHelp;
+};
+
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -61,6 +89,7 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    return full.toLowerCase().includes(chunk.toLowerCase());
 }
 
 /* Блок с надписью "Загрузка" */
@@ -72,9 +101,39 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function() {
-    // это обработчик нажатия кливиш в текстовом поле
-});
+let createCityNode = (city) => {
+  let div = document.createElement('div');
+  div.textContent = city;
+  filterResult.appendChild(div);
+};
+
+const offerHelp = () => {
+    let value = filterInput.value;
+    
+    filterResult.innerHTML = '';
+
+    async function promptLauncher () {
+      let parsedJson = await loadTowns();
+      for (let obj in parsedJson) {
+        let city = parsedJson[obj].name;
+        if (isMatching(city, value)) {
+          createCityNode(city);
+        }
+    }
+  }
+    
+    if (value.length > 0) {
+    loadingBlock.style.visibility = 'visible';
+    promptLauncher().then(() => loadingBlock.style.visibility = 'hidden');    
+}
+};
+
+filterInput.addEventListener('keyup', offerHelp);
+loadingBlock.style.visibility = 'hidden';
+filterBlock.style.display = 'initial';
+
+
+
 
 export {
     loadTowns,
