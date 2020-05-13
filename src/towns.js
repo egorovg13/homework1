@@ -109,7 +109,7 @@ let createCityNode = (city) => {
 
 const offerHelp = () => {
     let value = filterInput.value;
-    
+
     filterResult.innerHTML = '';
 
     async function promptLauncher () {
