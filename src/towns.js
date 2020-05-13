@@ -1,3 +1,5 @@
+import { loadAndSortTowns as loadTowns } from './index';
+
 /*
  Страница должна предварительно загрузить список городов из
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -39,43 +41,20 @@ homeworkContainer.appendChild(newDiv);
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-    let arrayLocation = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-
-    const NameSorter = (a, b) => {
-        if (a.name < b.name) return -1;
-        if (a.name === b.name) return 0;
-        if (a.name > b.name) return 1;
-    };
-
-    const responseHandler = (response) => {
-      if (response.ok) {
-        console.log('HEADERS OK'); 
-        return response.json();
-      } else {
-        console.log('HEADERS NOT OK');
-      }
-      
-    };
-
-    return fetch (arrayLocation).then(response => responseHandler(response)).then(list => list.sort(NameSorter)).catch(err => {
-      console.log('CAUGHT. Error Message is:   ' + err);
-      loadErrorHandler();
-    });
-}
 
 const loadErrorHandler = () => {
-  let div = document.createElement('div');
-  div.textContent = 'Не удалось загрузить города';
-  filterResult.appendChild(div);
+    let div = document.createElement('div');
 
-  let button = document.createElement('button');
-  button.textContent = 'Повторить';
-  filterResult.appendChild(button);
+    div.textContent = 'Не удалось загрузить города';
+    filterResult.appendChild(div);
 
-  button.onclick = offerHelp;
+    let button = document.createElement('button');
+
+    button.textContent = 'Повторить';
+    filterResult.appendChild(button);
+
+    button.onclick = offerHelp;
 };
-
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -102,9 +81,10 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
 let createCityNode = (city) => {
-  let div = document.createElement('div');
-  div.textContent = city;
-  filterResult.appendChild(div);
+    let div = document.createElement('div');
+
+    div.textContent = city;
+    filterResult.appendChild(div);
 };
 
 const offerHelp = () => {
@@ -113,27 +93,28 @@ const offerHelp = () => {
     filterResult.innerHTML = '';
 
     async function promptLauncher () {
-      let parsedJson = await loadTowns();
-      for (let obj in parsedJson) {
-        let city = parsedJson[obj].name;
-        if (isMatching(city, value)) {
-          createCityNode(city);
+        let parsedJson = await loadTowns().catch(() => {
+            loadErrorHandler();
+        });
+
+        for (let obj in parsedJson) {
+            let city = parsedJson[obj].name;
+            
+            if (isMatching(city, value)) {
+                createCityNode(city);
+            }
         }
     }
-  }
     
     if (value.length > 0) {
-    loadingBlock.style.visibility = 'visible';
-    promptLauncher().then(() => loadingBlock.style.visibility = 'hidden');    
-}
+        loadingBlock.style.visibility = 'visible';
+        promptLauncher().then(() => loadingBlock.style.visibility = 'hidden');    
+    }
 };
 
 filterInput.addEventListener('keyup', offerHelp);
 loadingBlock.style.visibility = 'hidden';
 filterBlock.style.display = 'initial';
-
-
-
 
 export {
     loadTowns,
