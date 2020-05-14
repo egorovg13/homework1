@@ -118,7 +118,7 @@ const refreshCookieTable = () => {
 
             };
 
-            newRow.innerHTML = `<td'></td> <td></td> <td></td>`
+            newRow.innerHTML = "<td'></td> <td></td> <td></td>"
             newRow.firstChild.append(cName);
             newRow.firstChild.nextElementSibling.append(cookieObj[cName]);
             newRow.lastChild.append(delBtn);
