@@ -45,8 +45,8 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-    console.log('Keyup triggered. Filter value: ' + filterNameInput.value)
-    
+    refreshCookieTable();
+
     for (let child of listTable.children) {
         filterRow(child);
     }
@@ -57,24 +57,18 @@ addButton.addEventListener('click', () => {
     let cookieName = addNameInput.value;
     let cookieValue = addValueInput.value;
 
-    addNameInput.value = '';
-    addValueInput.value = '';
-
     if (document.getElementById(cookieName) != null) {
-        console.log('cookie value rewritten');
         document.cookie = `${cookieName} = ${cookieValue}`;
         refreshCookieTable();
 
     } else {
         document.cookie = `${cookieName} = ${cookieValue}`;
-        console.log('cookie added');
         refreshCookieTable();
     }
 
 });
 
 const filterRow = (row) => {
-    console.log('Currently filtering row ' + row.id);    
 
     let filter = filterNameInput.value;
 
@@ -82,15 +76,14 @@ const filterRow = (row) => {
     let rValue = row.firstElementChild.nextElementSibling.innerText;
 
     if (rName.includes(filter) || rValue.includes(filter)) {
-        console.log('Matching row has been found!');
-        row.style.display = 'table-row';
+        // console.log('Row passed the filter');
     } else {
-        row.style.display = 'none';
+        // console.log('Row did not pass the filter');
+        row.remove();
     }
 };
 
 const refreshCookieTable = () => {
-    console.log('refreshCookieTable initiated');
 
     listTable.innerHTML = '';
 
@@ -112,7 +105,6 @@ const refreshCookieTable = () => {
             delBtn.innerText = 'Удалить';
 
             delBtn.onclick = function () {
-                console.log('deleting cookie...')
                 document.cookie = `${cName} = null; max-age=-1`;
                 refreshCookieTable();
 
@@ -122,12 +114,10 @@ const refreshCookieTable = () => {
             newRow.firstChild.append(cName);
             newRow.firstChild.nextElementSibling.append(cookieObj[cName]);
             newRow.lastChild.append(delBtn);
-            filterRow(newRow);
 
             listTable.appendChild(newRow);
-        } else {
-            console.log('no cookie provided');
-        }
+            filterRow(newRow);
+        } 
     }
 };
 
