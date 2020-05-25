@@ -2,8 +2,41 @@
 <html>
 <head>
   <meta charset="UTF-8">
+        <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=25198001-3597-44cb-b411-87ac2c933ab6" type="text/javascript"></script>
   <title>{{htmlWebpackPlugin.options.title}}</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+  <div class="container">
+    {{> "./src/templates/geo-content.hbs"}}
+  </div>
+
+  <!--MODAL HTML--> 
+        
+        <div class='modal'>
+                <div class="modal-header">
+                    <img src= img/test-marker.png id='pointerimg'>
+                    <div class="coords">Here will be coords</div>
+                    <span class="close-button">&times;</span>
+                </div>
+    
+                <div class="modal-body">
+                    <div class="reviews">
+
+                        <div class="review"></div>
+                    </div>
+                    <div class="form">
+                        <div class="form-header"> <p class = 'header-text'>
+                            ВАШ ОТЗЫВ
+                        </p> </div>
+                        <input type='text' placeholder="Ваше имя" class="form-input" id="name" required>
+                        <input type='text' placeholder="Укажите место" class="form-input" id="place" required>
+                        <input type='text' placeholder="Поделитесь впечатлениями" class="form-input" id="review" required>
+                        <button class="submit-button">Добавить</button>
+                    </div>
+                    </div>
+                </div>
+
+         <!--MODAL HTML END--> 
 </body>
 </html>
