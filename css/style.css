@@ -159,3 +159,7 @@
     color: #7D7D7D; 
     margin-top: 10px; 
 }
+
+.cluster_coordinates {
+    display:none;
+}

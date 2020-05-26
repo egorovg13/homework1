@@ -2,11 +2,6 @@ ymaps.ready(init);
 
 function init () {
 
-    let currentCoordinates;
-    let newPlacemark;
-    let inputAddress;
-    let modalAdr = document.querySelector('.coords');
-
     let map = new ymaps.Map('map', {
         center: [55.766001, 37.604961],
         zoom: 14,
@@ -14,6 +9,11 @@ function init () {
         behaviors: ['drag'],
     });
 
+    let currentCoordinates;
+    let newPlacemark;
+    let inputAddress;
+    let modalAdr = document.querySelector('.coords');
+    
     const showModal = (e) => {
         let pixelCoords = (e.get('pagePixels'));
         
@@ -95,55 +95,7 @@ function init () {
         }
 
     }
-
-    const renderModal = (coords) => {
-        reviewBox.innerHTML = '';
-
-        if ((coords) && (addedObjects[coords].length> 0)) {
-            console.log('entry found! cycling thouugh ')
-            let reviewsArray = addedObjects[coords];
-
-            reviewsArray.forEach(review => {
-
-                console.log(review)
-                let reviewContainer = document.createElement('div');
-                reviewContainer.classList.add('review');
-
-                let reviewSignature = document.createElement('div');
-                reviewSignature.classList.add('review-sign');
-
-                let nameInfo = document.createElement('span');
-                nameInfo.classList.add('name-info');
-
-                let placeInfo = document.createElement('span');
-                placeInfo.classList.add('place-info');
-
-                let dateInfo = document.createElement('span');
-                dateInfo.classList.add('date-info');
-
-                let reviewText = document.createElement('div');
-                reviewText.classList.add('review-text');
-
-                nameInfo.innerText = review.name + '  ';
-                placeInfo.innerText = review.place + '  ';
-                dateInfo.innerText = review.timeStamp;
-                reviewText.innerText = review.review;
-
-                reviewSignature.append(nameInfo);
-                reviewSignature.append(placeInfo);
-                reviewSignature.append(dateInfo);
-
-                reviewContainer.append(reviewSignature);
-                reviewContainer.append(reviewText);
-
-                reviewBox.append(reviewContainer);
-
-            })} else {
-            noReviews();
-        }
-
-    }
-
+    
     function updateAddress(coords) {
 
         modalAdr.innerText = 'Ищем адрес...';
@@ -152,7 +104,7 @@ function init () {
             let firstGeoObject = res.geoObjects.get(0);
             let fullAddress = firstGeoObject.getAddressLine();
 
-            let address = fullAddress.replace('Россия, Москва, ', "");
+            let address = fullAddress.replace('Россия, Москва, ', '');
 
             modalAdr.innerText = address;
             inputAddress = address;
@@ -165,11 +117,36 @@ function init () {
     let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
         '<div style="font-weight:bold;" class=ballon_header>{{ properties.balloonContentHeader|raw }}</div>' +
         // eslint-disable-next-line max-len
-        ' <a href = "javascript:undefined" class = ballon_address onclick = "clusterAdrClick(event, {{properties.hintContent}})"> {{ properties.balloonContentBody|raw }}</a>' +
+        '<div class = ballon_address> {{ properties.balloonContentBody|raw }}</div>' +
         '<div class=ballon_body>{{ properties.balloonContent|raw }}</div>' +
-        '<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>'
-            
-    );
+        '<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>' +
+        '<div class=cluster_coordinates>{{properties.hintContent}}</div>'
+        , {
+
+            build: function () {                   
+                customItemContentLayout.superclass.build.call(this);              
+                document.querySelector('.ballon_address').addEventListener('click', this.onAdressClick);                   
+            },
+            onAdressClick: function (e) {
+
+                let closeButton = document.querySelector('.ymaps-2-1-76-balloon__close-button');
+                let adress = document.querySelector('.ballon_address').innerHTML;
+                let cluster_coordinates = document.querySelector('.cluster_coordinates').innerText
+
+                let pixelCoords = [];
+    
+                pixelCoords.push(event.clientX);
+                pixelCoords.push(event.clientY);
+
+                spawnModal(pixelCoords);
+
+                document.querySelector('.coords').innerText = adress;
+
+                renderModal(cluster_coordinates);
+
+                closeButton.click();            
+            }
+        });
 
     let clusterer = new ymaps.Clusterer ({
         clusterDisableClickZoom: true,
@@ -196,8 +173,6 @@ let closeButton = document.querySelector('.close-button');
 let submitButton = document.querySelector('.submit-button');
 
 let reviewBox = document.querySelector('.reviews');
-
-//let reviewPlaceholder = document.querySelector('.review-placeholder')
 
 let inputName = document.querySelector('#name');
 
@@ -244,14 +219,58 @@ const getTimestamp = () => {
 
     return timeStamp;
 };
-
-const clusterAdrClick = (event, coords) => {
-
-    let pixelCoords = [];
-    
-    pixelCoords.push(event.clientX);
-    pixelCoords.push(event.clientY);
-
-    console.log(pixelCoords);
-};
   
+const renderModal = (coords) => {
+    reviewBox.innerHTML = '';
+
+    if ((coords) && (addedObjects[coords].length> 0)) {
+        console.log('entry found! cycling thouugh ')
+        let reviewsArray = addedObjects[coords];
+
+        reviewsArray.forEach(review => {
+
+            console.log(review)
+            let reviewContainer = document.createElement('div');
+
+            reviewContainer.classList.add('review');
+
+            let reviewSignature = document.createElement('div');
+
+            reviewSignature.classList.add('review-sign');
+
+            let nameInfo = document.createElement('span');
+
+            nameInfo.classList.add('name-info');
+
+            let placeInfo = document.createElement('span');
+
+            placeInfo.classList.add('place-info');
+
+            let dateInfo = document.createElement('span');
+
+            dateInfo.classList.add('date-info');
+
+            let reviewText = document.createElement('div');
+
+            reviewText.classList.add('review-text');
+
+            nameInfo.innerText = review.name + '  ';
+            placeInfo.innerText = review.place + '  ';
+            dateInfo.innerText = review.timeStamp;
+            reviewText.innerText = review.review;
+
+            reviewSignature.append(nameInfo);
+            reviewSignature.append(placeInfo);
+            reviewSignature.append(dateInfo);
+
+            reviewContainer.append(reviewSignature);
+            reviewContainer.append(reviewText);
+
+            reviewBox.append(reviewContainer);
+
+        }) 
+    } else {
+        noReviews();
+    }
+
+}
